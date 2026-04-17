@@ -90,7 +90,7 @@ if check_password():
                     if not ret: break
                     
                     # السطر المصحح (93): معالجة فريم كل 5 فريمات
-                    if int(cap.get(cv2.CAP_PROP_POS_FRAMES)) % 5 == 0:
+                    if int(cap.get(cv2.CAP_PROP_POS_FRAMES)) % 2 == 0:
                         img_rgb = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
                         results = body_model.predict(img_rgb, conf=0.25, verbose=False)
                         annotated_frame = results[0].plot() 
