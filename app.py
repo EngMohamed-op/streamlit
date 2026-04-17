@@ -90,4 +90,4 @@ if check_password():
                     if not ret: break
                     
                     # تسريع: نحلل فريم واحد كل 5 فريمات
-                    if int(cap.get(cv2.CAP_
+                    if int(cap.get(cv2.CAP_)
