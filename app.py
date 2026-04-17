@@ -35,6 +35,7 @@ def check_password():
         st.markdown('<h1>مَهْد 🌙</h1>', unsafe_allow_html=True)
         pwd = st.text_input("أدخل الرمز السري للدخول", type="password")
         if st.button("دخول →"):
+            # ملاحظة: تأكد من إضافة APP_SECRET في Streamlit Secrets
             if pwd == st.secrets.get("APP_SECRET", "mahd2026"):
                 st.session_state["password_correct"] = True
                 st.rerun()
@@ -51,7 +52,7 @@ def load_mahd_models():
         face_model = YOLO("face_best.pt")
         return body_model, face_model
     except Exception as e:
-        st.error(f"خطأ في تحميل الموديلات: تأكد من وجود الملفات في GitHub. الخطأ: {e}")
+        st.error(f"خطأ في تحميل الموديلات: {e}")
         return None, None
 
 # ─── 4. المحتوى والنفقيشن ──────────────────────────────────────────────────────
@@ -82,12 +83,22 @@ if check_password():
             
             if st.button("بدء المعالجة الذكية 🚀"):
                 cap = cv2.VideoCapture(tfile.name)
-                # مجهّز لعرض الصور المتحركة بالبوكسات
                 st_frame = st.empty() 
                 
                 while cap.isOpened():
                     ret, frame = cap.read()
                     if not ret: break
                     
-                    # تسريع: نحلل فريم واحد كل 5 فريمات
+                    # السطر المصحح (93): معالجة فريم كل 5 فريمات
                     if int(cap.get(cv2.CAP_PROP_POS_FRAMES)) % 5 == 0:
+                        img_rgb = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
+                        results = body_model.predict(img_rgb, conf=0.25, verbose=False)
+                        annotated_frame = results[0].plot() 
+                        st_frame.image(annotated_frame, caption="رصد حركة الرضيع مباشرة", use_container_width=True)
+                
+                cap.release()
+                st.success("✅ تم اكتمال التحليل!")
+
+    elif page == "🔔 سجل التنبيهات":
+        st.markdown('<h2 style="color: #8DB580;">تاريخ التنبيهات</h2>', unsafe_allow_html=True)
+        st.info("لا توجد مخاطر مرصودة حالياً.")
