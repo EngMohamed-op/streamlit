@@ -1,4 +1,8 @@
 streamlit
-opencv-python-headless
+fastapi
+uvicorn
 ultralytics
-supabase
+opencv-python-headless
+python-multipart
+pillow
+numpy
