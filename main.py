@@ -7,25 +7,22 @@ from PIL import Image
 
 app = FastAPI()
 
-# تحميل الموديل (تأكد أن الملف body_best.pt موجود في المجلد الرئيسي)
+# تحميل الموديل
 try:
     body_model = YOLO("body_best.pt")
 except Exception as e:
-    print(f"Error loading model: {e}")
+    print(f"Error: {e}")
 
 @app.get("/")
 def home():
-    return {"status": "Mahd Backend is Running 🌙"}
+    return {"status": "Mahd Backend is Live 🌙"}
 
 @app.post("/analyze")
 async def analyze(file: UploadFile = File(...)):
     contents = await file.read()
     image = Image.open(io.BytesIO(contents)).convert("RGB")
     frame = np.array(image)
-    
-    # تشغيل YOLOv8
     results = body_model.predict(frame, conf=0.25, verbose=False)
-    
     detections = []
     for r in results:
         for box in r.boxes:
@@ -34,5 +31,4 @@ async def analyze(file: UploadFile = File(...)):
                 "confidence": float(box.conf),
                 "bbox": [float(x) for x in box.xyxy[0].tolist()]
             })
-            
     return {"detections": detections}
